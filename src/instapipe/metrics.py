@@ -35,7 +35,15 @@ class Report:
 
 
 def _find_column(df: pd.DataFrame, candidates: list[str]) -> str | None:
-    """Find the first matching column name from a list of candidates."""
+    """Find the first matching column name from a list of candidates.
+
+    Checks for exact matches first, then substring matches.
+    """
+    # Exact match first
+    for candidate in candidates:
+        if candidate in df.columns:
+            return candidate
+    # Substring match
     for candidate in candidates:
         for col in df.columns:
             if candidate in col:
