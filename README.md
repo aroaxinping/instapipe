@@ -45,45 +45,60 @@ instapipe follows a classic ETL pipeline structure:
 
 ---
 
-## Prerequisites
+## Requirements
 
-Before using instapipe, you need your own Instagram data. Here's what you need and how to get it:
+### 1. Instagram Professional Account (Creator or Business)
 
-### 1. Instagram Professional Account
-
-You need a **Creator** or **Business** account on Instagram (the free personal account doesn't give you analytics).
+The free personal Instagram account does not give you access to analytics. You need to switch to a **Professional** account — it's free and takes 30 seconds.
 
 **How to switch:**
-1. Open Instagram > Settings > Account type and tools > Switch to professional account
-2. Choose **Creator** (recommended for content creators) or **Business**
-3. Pick a category that fits you (e.g. Digital Creator, Personal Blog)
-4. Done — you now have access to Instagram Insights
+1. Open Instagram > your profile > **Settings and privacy**
+2. Scroll to **Account type and tools** > **Switch to professional account**
+3. Choose **Creator** (recommended for content creators) or **Business**
+4. Pick a category that describes you (e.g. Digital Creator, Personal Blog, Entrepreneur)
+5. Tap **Done**
 
-### 2. Meta Business Suite access
+Once you switch, Instagram starts collecting analytics for your account. You'll see a new **Insights** button on your profile and on each post.
 
-Meta Business Suite is where you export your data as CSV files. It's free and linked to your professional Instagram account.
+> **Note:** Instagram only starts tracking metrics from the moment you switch. You won't have historical data from before the switch. If you just switched, wait at least 7 days and publish some content before exporting — otherwise you'll have an empty file.
 
-**How to set it up:**
-1. Go to [business.facebook.com](https://business.facebook.com)
-2. Log in with the Facebook account linked to your Instagram (if you don't have one linked, Instagram will prompt you to create or connect one when you switch to a professional account)
-3. In the left sidebar, click **Insights**
-4. Make sure your Instagram account appears — if it does, you're ready to export
+### 2. Meta Business Suite (free)
+
+Meta Business Suite is the web tool where you export your Instagram data as CSV files. It's free, provided by Meta, and automatically available when you have a professional Instagram account.
+
+**How to access it:**
+1. Go to [business.facebook.com](https://business.facebook.com) from a desktop browser
+2. Log in with the **Facebook account linked to your Instagram** — if you don't have one linked, Instagram prompts you to create or connect a Facebook Page when you switch to a professional account
+3. Once inside, click **Insights** in the left sidebar
+4. Make sure your Instagram account appears at the top — if it does, you're ready to export
+
+> **Don't have a Facebook account linked?** Go to Instagram > Settings > Accounts Center > Accounts > Add Facebook account. You need this connection for Meta Business Suite to see your Instagram data.
 
 ### 3. Export your data
 
-instapipe works with two types of exports from Meta Business Suite:
+instapipe works with CSV files exported from Meta Business Suite. There are two types:
 
-**Content/Posts CSV** (the main one):
-1. Meta Business Suite > Insights > Content
-2. Select the date range you want to analyze
-3. Click **Export** (top right) > CSV
-4. This gives you a file like `Contenido_Posts_Feb24_Mar23.csv` with one row per Reel/post, including views, reach, likes, comments, saves, shares, followers gained, etc.
+#### Content/Posts CSV (the main one — required)
 
-**Daily metric CSVs** (optional, for trend analysis):
-1. Meta Business Suite > Insights > Overview
-2. For each metric (Reach, Views, Followers, etc.), click the **Export** button
-3. Each export is a separate CSV file (e.g. `Alcance.csv`, `Visualizaciones.csv`, `Seguidores.csv`)
-4. These files use utf-16 encoding — instapipe handles this automatically
+This is the file with one row per Reel/post and all the metrics for each one.
+
+1. Open [Meta Business Suite](https://business.facebook.com) > **Insights** > **Content**
+2. Filter by **Instagram** (top left, make sure you're not looking at Facebook)
+3. Select the **date range** you want to analyze (e.g. last 28 days)
+4. Click **Export** (top right corner) > choose **CSV**
+5. A file like `Contenido_Posts_Feb24_Mar23.csv` downloads
+
+This CSV includes: description, publication time, views, reach, likes, comments, saves, shares, followers gained, duration, and permalink for each Reel/post.
+
+#### Daily metric CSVs (optional — for trend analysis)
+
+These are individual CSVs with one data point per day for a specific metric (e.g. daily reach, daily views).
+
+1. Open Meta Business Suite > **Insights** > **Overview**
+2. For each metric you want (Reach, Views, Followers, Interactions, Profile visits), click the small **Export** icon next to it
+3. Each one downloads as a separate CSV (e.g. `Alcance.csv`, `Visualizaciones.csv`, `Seguidores.csv`)
+
+These files use **utf-16 encoding** with a 3-line header — instapipe handles this automatically, you don't need to do anything special.
 
 ### 4. Python >= 3.10
 
@@ -91,7 +106,7 @@ instapipe works with two types of exports from Meta Business Suite:
 python3 --version  # Should be 3.10 or higher
 ```
 
-Dependencies (installed automatically): pandas, openpyxl, matplotlib, seaborn
+All Python dependencies are installed automatically when you run `pip install`: pandas, openpyxl, matplotlib, seaborn.
 
 ---
 
@@ -114,13 +129,15 @@ pip install -e .
 
 ## Usage
 
-### 1. Export your Instagram data
+### 1. Quick run (CLI)
 
-Go to **Meta Business Suite** > Insights > Content > Export. Save the CSV file.
+```bash
+instapipe analyze path/to/Contenido_Posts.csv --output results/
+```
 
-For daily metrics (reach, views, followers, etc.), go to Insights > Overview > Export each metric individually. These are saved as utf-16 encoded CSVs.
+This runs the full pipeline (ingest -> clean -> metrics -> output) and saves a CSV report + charts to the output directory.
 
-### 2. Run the pipeline
+### 2. Python API
 
 ```python
 from instapipe import ingest, clean, metrics, output
@@ -147,17 +164,9 @@ output.plot_save_rate(report, save_to="save_rate.png")
 output.plot_top_reels(report, save_to="top_reels.png")
 ```
 
-### 3. Quick run (CLI)
+### 3. Daily metrics (optional)
 
-```bash
-instapipe analyze path/to/Contenido_Posts.csv --output results/
-```
-
-This runs the full pipeline and saves CSV + charts to the output directory.
-
-### 4. Daily metrics (optional)
-
-For daily metric CSVs exported individually from Meta Business Suite:
+For the individual daily metric CSVs exported from Meta Business Suite Overview:
 
 ```python
 from instapipe.ingest import load_daily
