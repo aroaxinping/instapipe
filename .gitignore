@@ -19,7 +19,9 @@ Thumbs.db
 *.xlsx
 *.csv
 !examples/*.csv
+!examples/output/*.csv
 
 # Output
 results/
 *.png
+!examples/output/*.png
