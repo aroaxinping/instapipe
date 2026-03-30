@@ -68,7 +68,12 @@ instapipe follows a classic ETL pipeline structure:
 | `instapipe.ingest` | Reads Instagram export files (CSV, XLSX). Handles Meta Business Suite's utf-16 daily CSVs and utf-8-sig content CSVs transparently. |
 | `instapipe.clean` | Maps column names (Spanish/English) to internal names, converts date/number types, parses publication time into date, hour, and day of week. |
 | `instapipe.metrics` | Computes derived metrics: engagement rate (based on reach), save rate, share rate, follower conversion rate, best posting hour/day. |
+| `instapipe.classify` | Classifies Reels by topic based on description and hashtags. Ships with default rules, supports custom rules. |
 | `instapipe.output` | Exports results to CSV/JSON. Generates matplotlib/seaborn visualizations (engagement distribution, best hours, save rate scatter, top reels). |
+| `instapipe.excel` | Generates a styled Excel workbook with native formulas (Overview, Reels Raw, Engagement Calc). Dark theme. |
+| `instapipe.dashboard` | Generates an interactive HTML dashboard with 6 Plotly charts. Self-contained, opens in any browser. |
+| `instapipe.compare` | Compare two periods side by side: deltas and percentage changes for all key metrics. |
+| `instapipe.insights` | Advanced analysis: viral detection (outlier flagging), duration analysis (engagement by video length), hashtag analysis (which tags correlate with best performance). |
 
 ---
 
@@ -140,16 +145,21 @@ All Python dependencies are installed automatically when you run `pip install`: 
 ## Installation
 
 ```bash
-# Clone the repo
+# Option 1: pip install (from PyPI)
+pip install instapipe
+
+# Option 2: from source
 git clone https://github.com/aroaxinping/instapipe.git
 cd instapipe
-
-# Create a virtual environment (recommended)
 python -m venv .venv
 source .venv/bin/activate
-
-# Install in editable mode with all dependencies
 pip install -e .
+
+# Optional: install dashboard support (plotly)
+pip install instapipe[dashboard]
+
+# Optional: install dev tools (pytest, ruff, pre-commit)
+pip install instapipe[dev]
 ```
 
 ---
@@ -159,41 +169,89 @@ pip install -e .
 ### 1. Quick run (CLI)
 
 ```bash
+# Basic analysis: CSV report + charts
 instapipe analyze path/to/Contenido_Posts.csv --output results/
+
+# With Excel workbook
+instapipe analyze path/to/Contenido_Posts.csv --output results/ --excel
+
+# With interactive HTML dashboard (requires plotly)
+instapipe analyze path/to/Contenido_Posts.csv --output results/ --dashboard
+
+# All outputs at once
+instapipe analyze path/to/Contenido_Posts.csv --output results/ --excel --dashboard
+
+# CSV only, no charts
+instapipe analyze path/to/Contenido_Posts.csv --output results/ --no-charts
 ```
 
-This runs the full pipeline (ingest -> clean -> metrics -> output) and saves a CSV report + charts to the output directory.
+### 2. Combine daily metric CSVs
 
-### 2. Python API
+```bash
+# Combine Alcance.csv, Visualizaciones.csv, Seguidores.csv, etc. into one dataset
+instapipe daily path/to/raw_csvs/ --output results/
+```
+
+### 3. Python API
 
 ```python
 from instapipe import ingest, clean, metrics, output
+from instapipe.classify import add_topics
 
-# Load your content/posts export
+# Load and clean
 raw = ingest.load("path/to/Contenido_Posts.csv")
-
-# Clean and normalize
 df = clean.normalize(raw)
+df = add_topics(df)  # classify by topic
 
 # Compute metrics
 report = metrics.compute(df)
-
-# Print summary
 print(report.summary())
 
-# Export results
+# Export
 output.to_csv(report, "results.csv")
-
-# Generate visualizations
 output.plot_engagement(report, save_to="engagement.png")
 output.plot_best_hours(report, save_to="best_hours.png")
 output.plot_save_rate(report, save_to="save_rate.png")
 output.plot_top_reels(report, save_to="top_reels.png")
+
+# Excel workbook with native formulas
+from instapipe.excel import build_excel
+build_excel(report, "analytics.xlsx")
+
+# Interactive HTML dashboard
+from instapipe.dashboard import build_dashboard
+build_dashboard(report, "dashboard.html")
 ```
 
-### 3. Daily metrics (optional)
+### 4. Compare periods
 
-For the individual daily metric CSVs exported from Meta Business Suite Overview:
+```python
+from instapipe.compare import compare
+
+# Load and process two periods
+report_march = metrics.compute(clean.normalize(ingest.load("march.csv")))
+report_april = metrics.compute(clean.normalize(ingest.load("april.csv")))
+
+comparison = compare(current=report_april, previous=report_march)
+print(comparison.summary())
+```
+
+### 5. Advanced insights
+
+```python
+from instapipe.insights import detect_virals, analyze_duration, analyze_hashtags
+
+# Find outlier reels (2+ std devs above mean engagement)
+virals = detect_virals(report, threshold=2.0)
+
+# Engagement by video duration bucket
+duration = analyze_duration(report)
+
+# Which hashtags correlate with best engagement
+hashtags = analyze_hashtags(report, top_n=20)
+```
+
+### 6. Daily metrics (Python API)
 
 ```python
 from instapipe.ingest import load_daily
@@ -302,13 +360,16 @@ instapipe/
       __init__.py       # Package init, version
       ingest.py         # Load Meta Business Suite exports
       clean.py          # Normalize and clean data
+      classify.py       # Topic classification
       metrics.py        # Compute derived metrics
-      output.py         # Export and visualize
+      output.py         # Export CSV/JSON + matplotlib charts
+      excel.py          # Styled Excel workbook with formulas
+      dashboard.py      # Interactive Plotly HTML dashboard
+      compare.py        # Period-over-period comparison
+      insights.py       # Viral detection, duration & hashtag analysis
       cli.py            # Command-line interface
-  tests/
-    test_ingest.py
-    test_clean.py
-    test_metrics.py
+      __main__.py       # python -m instapipe support
+  tests/                # 53 tests across all modules
   examples/
     sample_data.csv     # Fake dataset (10 reels) for testing
     output/             # Pre-generated charts from sample data
@@ -316,7 +377,9 @@ instapipe/
   .github/
     workflows/ci.yml    # CI pipeline (pytest on Python 3.10-3.13)
     ISSUE_TEMPLATE/     # Bug report & feature request templates
-  pyproject.toml        # Package config
+  pyproject.toml        # Package config + optional deps
+  .pre-commit-config.yaml  # Ruff linting/formatting
+  CHANGELOG.md
   LICENSE
   CONTRIBUTING.md
   README.md
