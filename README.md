@@ -1,8 +1,35 @@
 # instapipe
 
+[![CI](https://github.com/aroaxinping/instapipe/actions/workflows/ci.yml/badge.svg)](https://github.com/aroaxinping/instapipe/actions/workflows/ci.yml)
+![Python](https://img.shields.io/badge/Python-3.10%2B-blue?logo=python)
+![License](https://img.shields.io/badge/License-MIT-green)
+![Meta Business Suite](https://img.shields.io/badge/Data%20source-Meta%20Business%20Suite-1877F2?logo=meta)
+
 Data pipeline for Instagram analytics. Import your exported data from Meta Business Suite, clean it, compute real metrics, and visualize what actually works.
 
 No APIs, no scraping, no third-party tokens. Just your Instagram export files (CSV/XLSX) and Python.
+
+### Why instapipe?
+
+Most Instagram analytics tools are either paid dashboards, require API tokens, or scrape data in ways that break with every update. instapipe takes a different approach: you export your own data from Meta Business Suite (a manual download, 30 seconds), and instapipe does the rest — cleaning, metric computation, and visualization. You own your data, you control the pipeline, and you can extend it however you want.
+
+---
+
+## What it generates
+
+<p align="center">
+  <img src="examples/output/engagement.png" alt="Engagement Rate Distribution" width="48%"/>
+  <img src="examples/output/best_hours.png" alt="Best Posting Hours" width="48%"/>
+</p>
+<p align="center">
+  <img src="examples/output/top_reels.png" alt="Top Reels by Engagement" width="48%"/>
+  <img src="examples/output/save_rate.png" alt="Save Rate vs Engagement" width="48%"/>
+</p>
+
+> Generated from sample data included in `examples/`. Try it yourself:
+> ```bash
+> instapipe analyze examples/sample_data.csv --output results/
+> ```
 
 ---
 
@@ -203,6 +230,69 @@ Key differences:
 
 ---
 
+## Try it without an Instagram account
+
+The repo includes a sample CSV with 10 fake reels so you can try the full pipeline immediately:
+
+```bash
+# After installation
+instapipe analyze examples/sample_data.csv --output results/
+```
+
+This generates:
+- `results/report.csv` — cleaned data with all computed metrics
+- `results/engagement.png` — engagement rate distribution
+- `results/best_hours.png` — best posting hours
+- `results/save_rate.png` — save rate vs engagement scatter
+- `results/top_reels.png` — top reels by engagement rate
+
+---
+
+## Troubleshooting
+
+### `ModuleNotFoundError: No module named 'instapipe'`
+
+You haven't installed instapipe or your virtual environment isn't active.
+
+```bash
+source .venv/bin/activate   # activate the venv
+pip install -e .             # install instapipe
+```
+
+### `ValueError: Could not find a reach or views column`
+
+Your CSV column names don't match what instapipe expects. This usually happens when Meta Business Suite exports in a language other than Spanish or English.
+
+Check your CSV header row:
+```bash
+head -1 your_file.csv
+```
+
+If the columns are in another language, open an issue with the header row and we'll add support for it.
+
+### `UnicodeDecodeError` when loading a daily metric CSV
+
+Use `load_daily()` instead of `load()` for the individual daily metric CSVs (Alcance.csv, Visualizaciones.csv, etc.) — they use utf-16 encoding:
+
+```python
+from instapipe.ingest import load_daily
+df = load_daily("Alcance.csv", "alcance")
+```
+
+### `FileNotFoundError`
+
+Double-check the path to your CSV file. If your file has spaces in the name, wrap the path in quotes:
+
+```bash
+instapipe analyze "path/to/My Export File.csv"
+```
+
+### Charts look wrong or empty
+
+Make sure your CSV has at least 3-5 rows of data. Charts generated from 1-2 reels won't be very informative.
+
+---
+
 ## Project structure
 
 ```
@@ -220,7 +310,12 @@ instapipe/
     test_clean.py
     test_metrics.py
   examples/
+    sample_data.csv     # Fake dataset (10 reels) for testing
+    output/             # Pre-generated charts from sample data
     basic_analysis.py   # Minimal working example
+  .github/
+    workflows/ci.yml    # CI pipeline (pytest on Python 3.10-3.13)
+    ISSUE_TEMPLATE/     # Bug report & feature request templates
   pyproject.toml        # Package config
   LICENSE
   CONTRIBUTING.md
