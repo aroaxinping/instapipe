@@ -70,11 +70,13 @@ def compute(df: pd.DataFrame) -> Report:
     """
     reach_col = _find_column(df, ["alcance", "reach"])
     views_col = _find_column(df, ["visualizaciones", "views", "reproduc"])
-    likes_col = _find_column(df, ["me_gusta", "likes"])
-    comments_col = _find_column(df, ["comentario", "comments"])
-    saves_col = _find_column(df, ["guardado", "saves"])
-    shares_col = _find_column(df, ["compartido", "shares"])
-    followers_col = _find_column(df, ["seguidores_ganado", "followers"])
+    likes_col = _find_column(df, ["me_gustas", "me_gusta", "likes"])
+    comments_col = _find_column(df, ["comentarios", "comentario", "comments"])
+    saves_col = _find_column(df, ["guardados", "guardado", "saves"])
+    shares_col = _find_column(df, ["compartidos", "compartido", "shares"])
+    followers_col = _find_column(
+        df, ["seguidores_ganados", "seguidores_ganado", "followers"]
+    )
     hour_col = _find_column(df, ["hora"])
     day_col = _find_column(df, ["dia_semana"])
 
