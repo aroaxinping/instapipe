@@ -1,0 +1,49 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="720" height="800">
+  <defs>
+    <style>
+      text { font-family: 'SF Mono', 'Fira Code', 'Cascadia Code', monospace; font-size: 13px; }
+    </style>
+  </defs>
+  <rect width="720" height="800" rx="10" fill="#0F0F1A"/>
+  <!-- Window buttons -->
+  <circle cx="20" cy="16" r="6" fill="#FF5F56"/>
+  <circle cx="38" cy="16" r="6" fill="#FFBD2E"/>
+  <circle cx="56" cy="16" r="6" fill="#27C93F"/>
+  <text x="360" y="18" fill="#94A3B8" text-anchor="middle" font-size="12">instapipe</text>
+  <text x="20" y="56" fill="#B388EB" font-weight="bold">$ pip install instapipe</text>
+  <text x="20" y="76" fill="#4ADE80" font-weight="normal">Successfully installed instapipe-0.1.0</text>
+  <text x="20" y="96" fill="#94A3B8" font-weight="normal"></text>
+  <text x="20" y="116" fill="#B388EB" font-weight="bold">$ instapipe analyze Contenido_Posts.csv -o results/ --excel --dashboard</text>
+  <text x="20" y="136" fill="#94A3B8" font-weight="normal"></text>
+  <text x="20" y="156" fill="#FCD34D" font-weight="normal">Loading Contenido_Posts.csv...</text>
+  <text x="20" y="176" fill="#94A3B8" font-weight="normal">  73 rows loaded.</text>
+  <text x="20" y="196" fill="#FCD34D" font-weight="normal">Cleaning data...</text>
+  <text x="20" y="216" fill="#94A3B8" font-weight="normal">  73 rows after cleaning.</text>
+  <text x="20" y="236" fill="#FCD34D" font-weight="normal">Classifying topics...</text>
+  <text x="20" y="256" fill="#E6A8D7" font-weight="normal">  Tech humor: 36</text>
+  <text x="20" y="276" fill="#E6A8D7" font-weight="normal">  Git: 8</text>
+  <text x="20" y="296" fill="#E6A8D7" font-weight="normal">  Programming general: 7</text>
+  <text x="20" y="316" fill="#E6A8D7" font-weight="normal">  SQL: 5</text>
+  <text x="20" y="336" fill="#E6A8D7" font-weight="normal">  Python: 5</text>
+  <text x="20" y="356" fill="#E6A8D7" font-weight="normal">  Terminal/Bash: 4</text>
+  <text x="20" y="376" fill="#E6A8D7" font-weight="normal">  Personal humor: 3</text>
+  <text x="20" y="396" fill="#E2E8F0" font-weight="normal">  Best practices: 3</text>
+  <text x="20" y="416" fill="#E6A8D7" font-weight="normal">  Excel: 1</text>
+  <text x="20" y="436" fill="#E6A8D7" font-weight="normal">  Data Science: 1</text>
+  <text x="20" y="456" fill="#FCD34D" font-weight="normal">Computing metrics...</text>
+  <text x="20" y="476" fill="#E2E8F0" font-weight="normal">Total reels: 73</text>
+  <text x="20" y="496" fill="#E2E8F0" font-weight="normal">Avg engagement rate: 11.84%</text>
+  <text x="20" y="516" fill="#E2E8F0" font-weight="normal">Avg save rate: 0.91%</text>
+  <text x="20" y="536" fill="#E2E8F0" font-weight="normal">Avg share rate: 1.03%</text>
+  <text x="20" y="556" fill="#E2E8F0" font-weight="normal">Avg follower conversion: 0.31%</text>
+  <text x="20" y="576" fill="#E2E8F0" font-weight="normal">Best posting hour: 12:00</text>
+  <text x="20" y="596" fill="#E2E8F0" font-weight="normal">Best posting day: Friday</text>
+  <text x="20" y="616" fill="#E2E8F0" font-weight="normal">Top performers: 8 reels</text>
+  <text x="20" y="636" fill="#94A3B8" font-weight="normal"></text>
+  <text x="20" y="656" fill="#4ADE80" font-weight="normal">CSV exported to results/report.csv</text>
+  <text x="20" y="676" fill="#4ADE80" font-weight="normal">Excel exported to results/analytics.xlsx</text>
+  <text x="20" y="696" fill="#4ADE80" font-weight="normal">Dashboard exported to results/dashboard.html</text>
+  <text x="20" y="716" fill="#4ADE80" font-weight="normal">Charts saved to results/</text>
+  <text x="20" y="736" fill="#94A3B8" font-weight="normal"></text>
+  <text x="20" y="756" fill="#4ADE80" font-weight="normal">Done. ✓</text>
+</svg>
