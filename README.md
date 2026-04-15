@@ -1,6 +1,7 @@
 # instapipe
 
 [![CI](https://github.com/aroaxinping/instapipe/actions/workflows/ci.yml/badge.svg)](https://github.com/aroaxinping/instapipe/actions/workflows/ci.yml)
+[![PyPI](https://img.shields.io/pypi/v/instapipe?logo=pypi&logoColor=white)](https://pypi.org/project/instapipe/)
 ![Python](https://img.shields.io/badge/Python-3.10%2B-blue?logo=python)
 ![License](https://img.shields.io/badge/License-MIT-green)
 ![Meta Business Suite](https://img.shields.io/badge/Data%20source-Meta%20Business%20Suite-1877F2?logo=meta)
