@@ -56,7 +56,6 @@ def build_excel(report: Report, save_to: str | Path) -> None:
         1. Overview — KPIs and top 5 reels
         2. Reels Raw — all reels with raw metrics
         3. Engagement Calc — native Excel formulas for engagement metrics
-        4. Advanced Metrics — follower rate/1K, reach rate, quality score
 
     Args:
         report: Report object from metrics.compute().
@@ -165,9 +164,9 @@ def build_excel(report: Report, save_to: str | Path) -> None:
     ws3["A1"].font = title_font; ws3["A1"].fill = ACCENT_FILL
     ws3["A1"].alignment = Alignment(horizontal="center", vertical="center")
 
-    headers3 = ["#", "Description", "Reach", "Likes", "Comments", "Saves",
+    headers3 = ["#", "Description", "Reach", "Views", "Likes", "Comments", "Saves",
                 "Shares", "ER %", "Save Rate %", "Share Rate %"]
-    widths3 = [4, 36, 12, 10, 10, 10, 12, 12, 12, 12]
+    widths3 = [4, 36, 12, 12, 10, 10, 10, 12, 12, 12, 12]
     for i, (h, w) in enumerate(zip(headers3, widths3), 1):
         ws3.column_dimensions[get_column_letter(i)].width = w
         _hdr(ws3.cell(row=2, column=i, value=h))
@@ -178,10 +177,11 @@ def build_excel(report: Report, save_to: str | Path) -> None:
             (1, r - 2),
             (2, str(row.get(desc_col, ""))[:40] if desc_col else ""),
             (3, int(row[reach_col]) if reach_col else 0),
-            (4, int(row[likes_col]) if likes_col else 0),
-            (5, int(row[comments_col]) if comments_col else 0),
-            (6, int(row[saves_col]) if saves_col else 0),
-            (7, int(row[shares_col]) if shares_col else 0),
+            (4, int(row[views_col]) if views_col else 0),
+            (5, int(row[likes_col]) if likes_col else 0),
+            (6, int(row[comments_col]) if comments_col else 0),
+            (7, int(row[saves_col]) if saves_col else 0),
+            (8, int(row[shares_col]) if shares_col else 0),
         ]
         for c, val in raw:
             cell = ws3.cell(row=r, column=c, value=val)
@@ -190,20 +190,20 @@ def build_excel(report: Report, save_to: str | Path) -> None:
             if c >= 3: cell.number_format = "#,##0"
 
         # ER = (likes + comments + saves + shares) / reach * 100
-        c = ws3.cell(row=r, column=8)
-        c.value = f"=IF(C{r}=0,0,(D{r}+E{r}+F{r}+G{r})/C{r}*100)"
+        c = ws3.cell(row=r, column=9)
+        c.value = f"=IF(C{r}=0,0,(E{r}+F{r}+G{r}+H{r})/C{r}*100)"
         c.font = bold_font; c.fill = LAVENDER_FILL; c.border = _border()
         c.number_format = "0.00"
 
         # Save Rate = saves / reach * 100
-        c = ws3.cell(row=r, column=9)
-        c.value = f"=IF(C{r}=0,0,F{r}/C{r}*100)"
+        c = ws3.cell(row=r, column=10)
+        c.value = f"=IF(C{r}=0,0,G{r}/C{r}*100)"
         c.font = normal_font; c.fill = fill; c.border = _border()
         c.number_format = "0.00"
 
-        # Share Rate = shares / reach * 100
-        c = ws3.cell(row=r, column=10)
-        c.value = f"=IF(C{r}=0,0,G{r}/C{r}*100)"
+        # Share Rate = shares / views * 100
+        c = ws3.cell(row=r, column=11)
+        c.value = f"=IF(D{r}=0,0,H{r}/D{r}*100)"
         c.font = normal_font; c.fill = fill; c.border = _border()
         c.number_format = "0.00"
 
@@ -211,11 +211,11 @@ def build_excel(report: Report, save_to: str | Path) -> None:
     sr = len(df) + 3
     ws3.cell(row=sr, column=1, value="AVG").font = Font(bold=True, color=GOLD, size=11)
     ws3.cell(row=sr, column=1).fill = ACCENT_FILL; ws3.cell(row=sr, column=1).border = _border()
-    for col in range(3, 11):
+    for col in range(3, 12):
         ltr = get_column_letter(col)
         cell = ws3.cell(row=sr, column=col)
-        cell.value = f"=SUM({ltr}3:{ltr}{sr-1})" if col <= 7 else f"=AVERAGE({ltr}3:{ltr}{sr-1})"
-        cell.number_format = "#,##0" if col <= 7 else "0.00"
+        cell.value = f"=SUM({ltr}3:{ltr}{sr-1})" if col <= 8 else f"=AVERAGE({ltr}3:{ltr}{sr-1})"
+        cell.number_format = "#,##0" if col <= 8 else "0.00"
         cell.font = Font(bold=True, color=GOLD, size=10)
         cell.fill = ACCENT_FILL; cell.border = _border()
 
