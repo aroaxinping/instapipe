@@ -25,3 +25,7 @@ Thumbs.db
 results/
 *.png
 !examples/output/*.png
+*.svg
+!examples/output/*.svg
+*.html
+!examples/output/*.html
