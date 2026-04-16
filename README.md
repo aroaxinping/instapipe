@@ -10,6 +10,10 @@ Data pipeline for Instagram analytics. Import your exported data from Meta Busin
 
 No APIs, no scraping, no third-party tokens. Just your Instagram export files (CSV/XLSX) and Python.
 
+<p align="center">
+  <img src="examples/output/cli_preview.svg" alt="instapipe CLI" width="90%"/>
+</p>
+
 ### Why instapipe?
 
 Most Instagram analytics tools are either paid dashboards, require API tokens, or scrape data in ways that break with every update. instapipe takes a different approach: you export your own data from Meta Business Suite (a manual download, 30 seconds), and instapipe does the rest — cleaning, metric computation, and visualization. You own your data, you control the pipeline, and you can extend it however you want.
@@ -17,6 +21,20 @@ Most Instagram analytics tools are either paid dashboards, require API tokens, o
 ---
 
 ## What it generates
+
+### Interactive HTML Dashboard
+
+<p align="center">
+  <img src="examples/output/dashboard_preview.png" alt="Interactive Plotly Dashboard" width="95%"/>
+</p>
+
+### Styled Excel Workbook
+
+<p align="center">
+  <img src="examples/output/excel_preview.png" alt="Excel Workbook with Native Formulas" width="95%"/>
+</p>
+
+### Matplotlib Charts
 
 <p align="center">
   <img src="examples/output/engagement.png" alt="Engagement Rate Distribution" width="48%"/>
@@ -29,7 +47,7 @@ Most Instagram analytics tools are either paid dashboards, require API tokens, o
 
 > Generated from sample data included in `examples/`. Try it yourself:
 > ```bash
-> instapipe analyze examples/sample_data.csv --output results/
+> instapipe analyze examples/sample_data.csv --output results/ --excel --dashboard
 > ```
 
 ---
